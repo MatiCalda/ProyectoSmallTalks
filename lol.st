@@ -146,14 +146,14 @@ menu:=1.
 					Transcript clear.
 					fecha:= Prompter prompt: ('Ingrese fecha: (dd/mm/aaaa) ').
 					"modificar fecha"
-					venta fecha:= (Date fromString: fecha).
+					venta fecha: (Date fromString: fecha).
 				].
 			
 				(detalleModificar=2) ifTrue: [
 					Transcript clear.
 					hora:= Prompter prompt: ('Ingrese hora: (hh:mm')  .
 					"modificar hora"
-					venta hora:= (Time fromString: hora).
+					venta hora: (Time fromString: hora).
 				].
 		
 				(detalleModificar=3) ifTrue: [
@@ -180,7 +180,7 @@ menu:=1.
 				
 				(detalleModificar=6) ifTrue: [
 					"Mostrar importe actualizado"
-					Transcript clear.
+					Transcript show: 'Importe: $' ,venta importe printString; cr; cr.
 					
 				].
 				
@@ -195,19 +195,20 @@ menu:=1.
 			
 			].
 
-	].
+		].
 
 		(opcion = 4) ifTrue: [	
 			Transcript clear.
 			sigueReg:='S'.
 			[sigueReg='S'] whileTrue: [
-				codigoProd:=(Prompter prompt: 'Ingrese codigo de producto (medicamento) ' ).
-				"buscar medicamento y borrar venta"
+				codigoMed:=(Prompter prompt: 'Ingrese codigo de producto (medicamento) ' ).
+				"TODO: hacer las validaciones para no meter un codigo que no exista"
+				farmacia delVentasMed: codigoMed.
 				sigueReg:=(Prompter prompt: 'Desea eliminar otra venta? s/n ') asString asUppercase .
 			
 			].
 	
-	].
+		].
 
 
 		(opcion = 5) ifTrue: [	
@@ -216,26 +217,22 @@ menu:=1.
 			[sigueDesc='S'] whileTrue: [
 				obraSocial :=(Prompter prompt: 'Ingrese obra social' ). "buscar obra social"
 				"Segun obra social, buscar IMPORTE asociado al medicamento y  aplicar descuento"
+				farmacia addDescuento: 20 oS: obraSocial.
 				sigueDesc :=(Prompter prompt: 'Desea aplicar otro 20% de descuentop ? s/n ') asString asUppercase .
 					
 			].
 			
 
-	].
+		].
 
 
 		(opcion = 6) ifTrue: [	
 				Transcript clear.
-				siguePorc:='S'.
-				[siguePorc='S'] whileTrue: [
 					tipoArtProd :=(Prompter prompt: 'Ingrese tipo de articulo' ). "buscar tipo de articulo"
+					porcentaje := (Prompter prompt: 'Ingrese porcentaje a aplicar (positivo si incrementa y negativo si reduce el precio)')asNumber.
 					"aplicar porcentaje"
-					sigueDesc :=(Prompter prompt: 'Desea aplicar 20% de descuento a otro producto? s/n ') asString asUppercase .
-							
+					[farmacia modImportePerfumeria: porcentaje tipoArt: tipoArtProd] on: Error do:[:error | MessageBox notify:'No se encontro el tipo de articulo'].
 				].
-					
-
-		].
 
 		(opcion = 7) ifTrue: [	
 					Transcript clear.
@@ -271,8 +268,8 @@ menu:=1.
 
 			
 
+				].
 
-].
 ]. "Corchete menu"
 
 
