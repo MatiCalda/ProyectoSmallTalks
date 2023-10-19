@@ -108,6 +108,7 @@ menu:=1.
 				].				
 			].
 		venta := Venta new initialize: codigoVenta hasObraSocial: obraSocial. 
+		venta setFecha: Date today setHora: Time now.
 		].
 		[(opcion = 2 ) and: [sigueVenta='S']] whileTrue: [
 			codigoProd :=(Prompter prompt: 'Ingrese codigo producto' ) asNumber .
@@ -125,9 +126,11 @@ menu:=1.
 		(opcion = 3) ifTrue: [	
 			Transcript clear.
 			sigueModificar:='S'.
+			codigoVentaModificar:=(Prompter prompt: 'Ingrese codigo de venta a modificar ')asNumber . "validar codigos"
 			[sigueModificar='S'] whileTrue: [
-			
-				codigoVentaModificar:=(Prompter prompt: 'Ingrese codigo de venta a modificar ')asNumber . "validar codigos"
+				"TODO: validar si el codigo existe, poner un if que englobe todo esto"
+				venta := farmacia getVenta: codigoVentaModificar.
+
 				Transcript show: codigoVentaModificar printString ; cr.
 				Transcript show: '1)  Fecha '; cr.
 				Transcript show: '2)  Hora '; cr.
@@ -143,30 +146,33 @@ menu:=1.
 					Transcript clear.
 					fecha:= Prompter prompt: ('Ingrese fecha: (dd/mm/aaaa) ').
 					"modificar fecha"
-					fecha:= (Date fromString: fecha).
+					venta fecha:= (Date fromString: fecha).
 				].
 			
 				(detalleModificar=2) ifTrue: [
 					Transcript clear.
 					hora:= Prompter prompt: ('Ingrese hora: (hh:mm')  .
 					"modificar hora"
-					hora:= (Time fromString: hora).
+					venta hora:= (Time fromString: hora).
 				].
 		
 				(detalleModificar=3) ifTrue: [
 					Transcript clear.
-					obraSocial:= Prompter prompt: ('Ingrese nueva obra social'). 
+					venta obraSocial: (Prompter prompt: ('Ingrese nueva obra social')asString ).
 				].
 
 				(detalleModificar=4) ifTrue: [
 					Transcript clear.
-					codigoProd := Prompter prompt: ('Ingrese codigo de producto') asNumber. "comparar codigos y buscar"
-					cantidadAgregar:=Prompter prompt: ('Ingrese  cantidad del producto') asNumber . "modificar stock de productos productos"
+					codigoProd := (Prompter prompt: 'Ingrese codigo de producto')asNumber. "comparar codigos y buscar"
+					venta addProducto: (farmacia getProducto: codigoProd).
+					"cantidadAgregar:=Prompter prompt: ('Ingrese  cantidad del producto') asNumber . modificar stock de productos productos"
 					
 				].
 
 				(detalleModificar=5) ifTrue: [
 					"aca va la funcion de eliminar producto, que actualizaria el importe total"
+					codigoProd := (Prompter prompt: 'Ingrese codigo de producto')asNumber. "comparar codigos y buscar"
+					venta delProducto: (farmacia getProducto: codigoProd).
 					Transcript clear.
 					
 				].
